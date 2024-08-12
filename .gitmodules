@@ -1,0 +1,7 @@
+[submodule "vendor/imgui"]
+	path = vendor/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking
+[submodule "vendor/nuklear"]
+	path = vendor/nuklear
+	url = https://github.com/Immediate-Mode-UI/Nuklear

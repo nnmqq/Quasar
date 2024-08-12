@@ -1,12 +1,12 @@
 # Default to Linux
 LINUX_CC = clang
-LINUX_CFLAGS = -Wall -g -I./include -I./vendor/glad/include -I./vendor
-LINUX_LDFLAGS = -lGL -lglfw -lm
+LINUX_CFLAGS = -Wall -std=c23 -g -I./include -I./vendor/glad/include -I./vendor
+LINUX_LDFLAGS = -lGL -lglfw -lm -lGLEW
 LINUX_TARGET = build/linux/flan
 
 # Windows cross-compilation settings
 WIN_CC = ~/llvm-mingw/llvm/bin/x86_64-w64-mingw32-clang
-WIN_CFLAGS = -Wall -g -I/home/nnmqq/winlibs/glfw/include/ -I./include -I./vendor/glad/include -I./vendor
+WIN_CFLAGS = -Wall -std=c23 -g -I/home/nnmqq/winlibs/glfw/include/ -I./include -I./vendor/glad/include -I./vendor -DWIN32
 WIN_LDFLAGS = -L/home/nnmqq/winlibs/glfw/lib-mingw-w64 -lglfw3 -lopengl32 -lgdi32 -lm
 WIN_TARGET = build/windows/flan.exe
 
@@ -20,7 +20,7 @@ else
 endif
 
 # Source files and object files
-SRCS = $(wildcard src/*.c)
+SRCS = $(shell find src -name '*.c')
 LINUX_OBJS = $(SRCS:src/%.c=build/linux/%.o) build/linux/glad.o
 WIN_OBJS = $(SRCS:src/%.c=build/windows/%.o) build/windows/glad.o
 
@@ -61,12 +61,14 @@ build/windows:
 $(LINUX_OBJS): | build/linux
 
 build/linux/%.o: src/%.c
+	@mkdir -p $(dir $@)
 	$(LINUX_CC) $(LINUX_CFLAGS) -c $< -o $@
 
 # Compile object files for Windows
 $(WIN_OBJS): | build/windows
 
 build/windows/%.o: src/%.c
+	@mkdir -p $(dir $@)
 	$(WIN_CC) $(WIN_CFLAGS) -c $< -o $@
 
 # Compile glad.c for Linux
