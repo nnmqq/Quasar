@@ -10,3 +10,7 @@ build
 
 > make // to build both
 > make clean // removes build files
+
+TODO:
+- add nuklear as submodule
+- add windows configuration script
