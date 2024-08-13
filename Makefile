@@ -25,7 +25,7 @@ LINUX_OBJS = $(SRCS:src/%.c=build/linux/%.o) build/linux/glad.o
 WIN_OBJS = $(SRCS:src/%.c=build/windows/%.o) build/windows/glad.o
 
 # Default target
-all: linux windows
+all: linux windows copy_shaders
 
 # Linux target
 linux: $(LINUX_TARGET)
@@ -57,6 +57,13 @@ build/linux:
 build/windows:
 	mkdir -p build/windows
 
+# Copy shaders to build directories
+copy_shaders:
+	@mkdir -p build/linux/shaders
+	@mkdir -p build/windows/shaders
+	cp -r src/shaders/*.glsl build/linux/shaders/
+	cp -r src/shaders/*.glsl build/windows/shaders/
+
 # Compile object files for Linux
 $(LINUX_OBJS): | build/linux
 
@@ -84,4 +91,4 @@ clean:
 	rm -f $(LINUX_OBJS) $(WIN_OBJS) $(LINUX_TARGET) $(WIN_TARGET)
 	rm -rf build
 
-.PHONY: clean linux windows all rl rw
+.PHONY: clean linux windows all rl rw copy_shaders
