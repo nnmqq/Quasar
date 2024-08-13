@@ -12,5 +12,11 @@ build
 >$ make clean // removes build files
 
 TODO:
+// as soon as possible
+- Add data oriented approach for handling shaders
+- More flexible window creation system
+- 2D renderer
+
+// long term
 - Add windows configuration script
   - GLFW install script
