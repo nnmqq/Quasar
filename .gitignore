@@ -5,7 +5,7 @@ flan
 flan.exe
 *.exe
 *.log
-vendor/nuklear/
+template
 
 # Prerequisites
 *.d
