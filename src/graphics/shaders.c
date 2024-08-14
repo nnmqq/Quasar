@@ -1,17 +1,17 @@
 #include "graphics/shaders.h"
 
-GLuint flan_createShaderProgram(const char* vertexPath, const char* fragmentPath)
+GLuint quasarCreateShaderProgram(const char* vertexPath, const char* fragmentPath)
 {
   GLuint shaderProgram = glCreateProgram();
 
-  GLuint vertexShader = flan_compileShader(vertexPath, GL_VERTEX_SHADER);
-  GLuint fragmentShader = flan_compileShader(fragmentPath, GL_FRAGMENT_SHADER);
+  GLuint vertexShader = quasarCompileShader(vertexPath, GL_VERTEX_SHADER);
+  GLuint fragmentShader = quasarCompileShader(fragmentPath, GL_FRAGMENT_SHADER);
 
   glAttachShader(shaderProgram, vertexShader);
   glAttachShader(shaderProgram, fragmentShader);
   glLinkProgram(shaderProgram);
 
-  flan_checkShaderProgramLinking(shaderProgram);
+  quasarCheckShaderProgramLinking(shaderProgram);
 
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
@@ -19,23 +19,23 @@ GLuint flan_createShaderProgram(const char* vertexPath, const char* fragmentPath
   return shaderProgram;
 }
 
-GLuint flan_compileShader(const char* sourcePath, GLenum shaderType)
+GLuint quasarCompileShader(const char* sourcePath, GLenum shaderType)
 {
-    char* source = flan_readFile(sourcePath);  // Read the file content
+    char* source = quasarReadFile(sourcePath);  // Read the file content
 
     GLuint shader = glCreateShader(shaderType);
     const GLchar* shaderSource = (const GLchar*)source;
     glShaderSource(shader, 1, &shaderSource, NULL);
     glCompileShader(shader);
 
-    flan_checkShaderCompilation(shader);
+    quasarCheckShaderCompilation(shader);
 
     free(source);  // Free the source buffer after compilation
 
     return shader;
 }
 
-void flan_checkShaderCompilation(GLuint shader)
+void quasarCheckShaderCompilation(GLuint shader)
 {
   GLint success;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -47,7 +47,7 @@ void flan_checkShaderCompilation(GLuint shader)
   }
 }
 
-void flan_checkShaderProgramLinking(GLuint shaderProgram)
+void quasarCheckShaderProgramLinking(GLuint shaderProgram)
 {
   GLint success;
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
@@ -59,7 +59,7 @@ void flan_checkShaderProgramLinking(GLuint shaderProgram)
   }
 }
 
-char* flan_readFile(const char* filepath)
+char* quasarReadFile(const char* filepath)
 {
   FILE* file = fopen(filepath, "r");
   if (!file) {

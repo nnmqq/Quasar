@@ -18,11 +18,11 @@ const unsigned int indices[] = {
 
 int main(void)
 {
-  Window window = flan_createWindow(800, 800, "Shader Example");
-  flan_initGLAD(&window);
+  Window window = quasarCreateWindow(800, 800, "Shader Example", 1);
+  quasarInitGLAD(&window);
 
   // Load and compile shaders
-  GLuint shaderProgram = flan_createShaderProgram("src/shaders/vertex_shader.glsl", "src/shaders/fragment_shader.glsl");
+  GLuint shaderProgram = quasarCreateShaderProgram("src/shaders/vertex_shader.glsl", "src/shaders/fragment_shader.glsl");
   // Create buffer
   Buffer buffer = createBuffer(vertices, sizeof(vertices), indices, sizeof(indices));
 
@@ -33,6 +33,8 @@ int main(void)
   // Color attribute
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
+
+  quasarSetWindowTitle(&window, "           testing long           stuff");
 
   // Main loop
   while (!glfwWindowShouldClose(window.window)) {
@@ -45,9 +47,8 @@ int main(void)
     glfwSwapBuffers(window.window);
     glfwPollEvents();
   }
-
   deleteBuffer(&buffer);
-  flan_terminate(&window);
+  quasarTerminate(&window);
 
   return EXIT_SUCCESS;
 }
