@@ -18,8 +18,10 @@ const unsigned int indices[] = {
 
 int main(void)
 {
-  Window window = quasarCreateWindow(800, 800, "Shader Example", 1);
-  quasarInitGLAD(&window);
+  Window window;
+  if (!quasarCreateWindow(&window, 800, 800, "Shader Example", 1)) {
+    return -1;
+  }
 
   // Load and compile shaders
   GLuint shaderProgram = quasarCreateShaderProgram("src/shaders/vertex_shader.glsl", "src/shaders/fragment_shader.glsl");
@@ -48,7 +50,7 @@ int main(void)
     glfwPollEvents();
   }
   deleteBuffer(&buffer);
-  quasarTerminate(&window);
+  quasarTerminate();
 
   return EXIT_SUCCESS;
 }
