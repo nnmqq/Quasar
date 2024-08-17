@@ -1,0 +1,42 @@
+Checks: >
+  *, -clang-diagnostic-*, -llvm-header-guard, -readability-*, -modernize-*,
+  -performance-*, -bugprone-*, -cert-*, -llvmlibc-restrict-system-libc-headers,
+  bugprone-use-after-move,
+  bugprone-use-after-free,
+  bugprone-dangling-else,
+  bugprone-unused-return-value,
+  bugprone-suspicious-assign,
+  bugprone-suspicious-missing-comma,
+  bugprone-suspicious-semicolon,
+  bugprone-infinite-recursion,
+  bugprone-unchecked-optional-access,
+  cppcoreguidelines-pro-type-member-init,
+  cppcoreguidelines-avoid-goto,
+  cppcoreguidelines-avoid-const-or-ref-qualifiers,
+  cppcoreguidelines-pro-type-const-cast,
+  cppcoreguidelines-pro-type-static-cast-downcast,
+  cppcoreguidelines-avoid-const-or-ref-qualifiers,
+  readability-dangling-else,
+  performance-inefficient-algorithm,
+  performance-unnecessary-value-param,
+  performance-unnecessary-copy-initialization,
+  performance-for-range-copy,
+  performance-loop-invariant-code,
+  performance-avoid-const-cast,
+  performance-avoid-slow-operations,
+  bugprone-suspicious-integer-division,
+  bugprone-implicit-widening-conversion
+
+CheckOptions:
+  - key: bugprone-suspicious-missing-comma.IgnoreSuspiciousMissingComma
+    value: 'true'
+  - key: bugprone-implicit-widening-conversion.IgnoreImplicitWideningConversion
+    value: 'true'
+  - key: cppcoreguidelines-pro-type-member-init.IgnoreMemberInit
+    value: 'true'
+  - key: cppcoreguidelines-pro-type-const-cast.IgnoreConstCast
+    value: 'true'
+  - key: cppcoreguidelines-pro-type-static-cast-downcast.IgnoreStaticCast
+    value: 'true'
+  - key: cppcoreguidelines-avoid-const-or-ref-qualifiers.IgnoreConstOrRefQualifiers
+    value: 'true'

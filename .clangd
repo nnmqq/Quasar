@@ -1,2 +1,2 @@
 Diagnostics:
-  UnusedIncludes: None
+  UnusedIncludes: Strict #only include headers when they're needed

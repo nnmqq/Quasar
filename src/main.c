@@ -1,56 +1,94 @@
-#include "window/window.h"
-#include "graphics/shaders.h"
-#include "graphics/buffer.h"
+#include "util/error.h"
+#include "util/logger.h"
+#include <stdio.h>
+#include <window/window.h>
 
-// Vertex data for a square
-const float vertices[] = {
-  // Positions          // Colors
-  -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Top-left
-  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom-left
-  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom-right
-  0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f // Top-right
-};
-
-const unsigned int indices[] = {
-  0, 1, 2, // First triangle
-  2, 3, 0 // Second triangle
-};
-
-int main(void)
+void test()
 {
-  Window window;
-  if (!quasarCreateWindow(&window, 800, 800, "Shader Example", 1)) {
+  QS_REPORT_ERROR(QS_NO_ERROR);
+  QS_LOG(QS_LOG_LEVEL_INFO, "message");
+  QS_LOG(QS_LOG_LEVEL_ERROR, "message");
+  QS_LOG(QS_LOG_LEVEL_WARNING, "message");
+  QS_LOG(QS_LOG_LEVEL_FATAL, "message");
+}
+
+int main()
+{
+  QuasarAPIInterface apiInterface;
+  if (initializeAPIInterface(&apiInterface, QUASAR_API_OPENGL) != 0) {
+    fprintf(stderr, "Failed to initialize API interface.\n");
     return -1;
   }
 
-  // Load and compile shaders
-  GLuint shaderProgram = quasarCreateShaderProgram("src/shaders/vertex_shader.glsl", "src/shaders/fragment_shader.glsl");
-  // Create buffer
-  Buffer buffer = createBuffer(vertices, sizeof(vertices), indices, sizeof(indices));
+  QsConfig config1 = {
+    .width = 800,
+    .height = 600,
+    .title = "OpenGL Window",
+    .resizable = 1,
+    .vsync = 1,
+    .samples = 4,
+    .glMajorVersion = 4,
+    .glMinorVersion = 4,
+    .openglProfile = GLFW_OPENGL_CORE_PROFILE,
+    .api = QUASAR_API_OPENGL
+  };
+  QsConfig config2 = {
+    .width = 800,
+    .height = 600,
+    .title = "OpenGL Window",
+    .resizable = 1,
+    .vsync = 1,
+    .samples = 4,
+    .glMajorVersion = 4,
+    .glMinorVersion = 4,
+    .openglProfile = GLFW_OPENGL_CORE_PROFILE,
+    .api = QUASAR_API_OPENGL
+  };
 
-  // Position attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
+  QsWindow window1;
+  QsWindow window2;
 
-  // Color attribute
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
+  if (apiInterface.createWindow(&window1, &config1) != 0) {
+    fprintf(stderr, "Failed to create window 1.\n");
+    return -1;
+  }
 
-  quasarSetWindowTitle(&window, "           testing long           stuff");
+  if (apiInterface.createWindow(&window2, &config2) != 0) {
+    fprintf(stderr, "Failed to create window 2.\n");
+    apiInterface.destroyWindow(&window1);
+    return -1;
+  }
 
-  // Main loop
-  while (!glfwWindowShouldClose(window.window)) {
-    glClear(GL_COLOR_BUFFER_BIT);
+  apiInterface.setContext(&window1);
+  apiInterface.setContext(&window2);
 
-    glUseProgram(shaderProgram);
-    bindBuffer(&buffer);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  apiInterface.setVsync(&window1, 1);
+  apiInterface.setVsync(&window2, 1);
 
-    glfwSwapBuffers(window.window);
+  while (!glfwWindowShouldClose(window1.window) && !glfwWindowShouldClose(window2.window)) {
+    // Render and swap buffers
+    apiInterface.setContext(&window1);
+    // Render code for window1...
+
+    apiInterface.setContext(&window2);
+    // Render code for window2...
+
+    apiInterface.setContext(&window1);
+    glfwSwapBuffers(window1.window);
+
+    apiInterface.setContext(&window2);
+    glfwSwapBuffers(window2.window);
+
+    apiInterface.setContext(&window1);
     glfwPollEvents();
   }
-  deleteBuffer(&buffer);
-  quasarTerminate();
 
-  return EXIT_SUCCESS;
+  // Destroy the windows
+  apiInterface.destroyWindow(&window1);
+  apiInterface.destroyWindow(&window2);
+
+  // Terminate the OpenGL API
+  apiInterface.terminateAPI();
+
+  return 0;
 }

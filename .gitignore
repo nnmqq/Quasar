@@ -6,6 +6,8 @@ flan.exe
 *.exe
 *.log
 template
+core.*
+valgrind*
 
 # Prerequisites
 *.d

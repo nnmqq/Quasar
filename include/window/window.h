@@ -1,25 +1,37 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#define GLAD_GL_IMPLEMENTATION
-#include <glad/glad.h>
+#define INITIAL_WINDOW_CAPACITY 4
+
+// Graphics api backend
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#define MAX_WINDOWS 10
+typedef enum {
+  QUASAR_API_OPENGL,
+  QUASAR_API_VULKAN,
+  QUASAR_API_DIRECTX
+} QsAPI;
 
 typedef struct {
-    int majorVersion;
-    int minorVersion;
-    int profile;
-    int samples;
-    int vsync;
-    int resizable;
-    // Add more fields as needed
-} OpenGLConfig;
+  int isGlfwInitialized;
+  int isGladInitialized;
+  int capacity;
+} __attribute__((aligned(16))) QsWinVar;
+
+// Basic window settings
+typedef struct {
+  int width;
+  int height;
+  const char* title;
+  int resizable;
+  int vsync;
+  int samples;
+  int glMajorVersion;
+  int glMinorVersion;
+  int openglProfile;
+  QsAPI api;
+} __attribute__((aligned(64))) QsConfig;
 
 typedef struct {
   int width;
@@ -29,27 +41,80 @@ typedef struct {
   int resizable;
   int vsync;
   int id;
-} Window;
+} __attribute__((aligned(64))) QsWindow;
 
-// Store created window
-extern Window windowRegistry[MAX_WINDOWS];
-extern int quasarWindowCount;
-extern int isGlfwInitialized;
-extern int isGladInitialized;
+typedef struct {
+    QsWindow* windows;
+    int windowCount;
+} __attribute__((aligned(16))) QsWindowManager;
 
-int quasarCreateWindow(Window* win, int width, int height, const char* title, int resizable);
-int quasarInitGLAD(Window* win);
-int quasarInitGlfw();
-int quasarCloseWindow(Window* win);
-int quasarCloseWindowByID(int id);
-int quasarTerminate();
+typedef struct {
+    // Window Management
+    int (*createWindow)(QsWindow* win, QsConfig* config);
+    void (*setContext)(QsWindow* win);
+    void (*setVsync)(QsWindow* win, int vsync);
+    void (*destroyWindow)(QsWindow* win);
+    void (*terminateAPI)();
 
-void quasarSetWindowResizable(Window* win, int resizable);
-void quasarSetVsync(Window* win, int vsync);
-void quasarSetWindowSize(Window* win, int width, int height);
-void quasarSetWindowTitle(Window* win, const char* title);
-void quasarSetWindowContext(Window* win);
-void quasarSetWindowContextByID(int id);
-Window* quasarGetWindowByID(int id);
+    // Core Window Manipulation
+    int (*getWindowCount)();
+    QsWindow* (*getWindowByIndex)(int index);
+    QsWindow* (*getWindowByID)(int windowID);
+    int (*isWindowOpen)(QsWindow* win);
+    void (*setWindowPosition)(QsWindow* win, int x, int y);
+    void (*setWindowSize)(QsWindow* win, int width, int height);
+    void (*getWindowSize)(QsWindow* win, int* width, int* height);
+    void (*getWindowPosition)(QsWindow* win, int* x, int* y);
+    void (*setWindowIcon)(QsWindow* win, const char* iconPath);
+    void (*setWindowOpacity)(QsWindow* win, float opacity);
+    void (*setWindowFullscreen)(QsWindow* win, int fullscreen);
+    void (*setWindowBorderless)(QsWindow* win, int borderless);
+    void (*toggleFullscreen)(QsWindow* win);
+    void (*setWindowFocus)(QsWindow* win);
+    void (*showWindow)(QsWindow* win);
+    void (*hideWindow)(QsWindow* win);
+    void (*minimizeWindow)(QsWindow* win);
+    void (*maximizeWindow)(QsWindow* win);
+    void (*restoreWindow)(QsWindow* win);
+
+    // Event Handling
+    void (*pollEvents)();
+    void (*setEventCallback)(QsWindow* win, void (*callback)(QsWindow* win, int eventType, ...));
+    int (*shouldClose)(QsWindow* win);
+
+    // Input Handling
+    int (*isKeyPressed)(QsWindow* win, int keyCode);
+    int (*isKeyReleased)(QsWindow* win, int keyCode);
+    int (*isKeyDown)(QsWindow* win, int keyCode);
+    int (*isKeyUp)(QsWindow* win, int keyCode);
+    int (*isMouseButtonPressed)(QsWindow* win, int button);
+    int (*isMouseButtonReleased)(QsWindow* win, int button);
+    int (*isMouseButtonDown)(QsWindow* win, int button);
+    int (*isMouseButtonUp)(QsWindow* win, int button);
+    void (*getMousePosition)(QsWindow* win, double* xpos, double* ypos);
+
+    // Context and Rendering
+    void (*swapBuffers)(QsWindow* win);
+    void (*makeContextCurrent)(QsWindow* win);
+    void (*getCurrentContext)(QsWindow** win);
+    void (*shareContext)(QsWindow* win1, QsWindow* win2);
+    void (*createContext)(QsWindow* win); // Create a new context for a window
+    void (*destroyContext)(QsWindow* win); // Destroy the context associated with a window
+    int (*getCurrentContextID)(); // Get the ID of the currently active context
+    void (*makeContextCurrentByID)(int contextID); // Make a context current by its ID
+
+    // Custom Data
+    void (*setWindowUserData)(QsWindow* win, void* data);
+    void* (*getWindowUserData)(QsWindow* win);
+
+    // Backend Agnostic
+    int (*getAPI)();
+    void (*setAPI)(QsAPI api);
+} __attribute__((aligned(128))) QuasarAPIInterface;
+
+int initializeAPIInterface(QuasarAPIInterface* apiInterface, QsAPI api);
+
+extern QsWinVar windowVar;
+extern QsWindowManager windowManager;
 
 #endif // WINDOW_H

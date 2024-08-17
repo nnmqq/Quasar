@@ -1,19 +1,19 @@
 # Default to Linux
 LINUX_CC = clang
-LINUX_CFLAGS = -Wall -std=c23 -g -I./include -I./vendor/glad/include -I./vendor
+LINUX_CFLAGS = -Wall -Wextra -Wpedantic -std=c23 -I./include -I./vendor/glad/include -I./vendor
 LINUX_LDFLAGS = -lGL -lglfw -lm
 LINUX_TARGET = build/linux/Quasar
 
 # Windows cross-compilation settings
 WIN_CC = ~/llvm-mingw/llvm/bin/x86_64-w64-mingw32-clang
-WIN_CFLAGS = -Wall -std=c23 -g -I/home/nnmqq/winlibs/glfw/include/ -I./include -I./vendor/glad/include -I./vendor -DWIN32
+WIN_CFLAGS = -Wall -Wextra -Wpedantic -std=c23 -I/home/nnmqq/winlibs/glfw/include/ -I./include -I./vendor/glad/include -I./vendor -DWIN32
 WIN_LDFLAGS = -L/home/nnmqq/winlibs/glfw/lib-mingw-w64 -lglfw3 -lopengl32 -lgdi32 -lm
 WIN_TARGET = build/windows/Quasar.exe
 
 # Debug flags
 ifeq ($(DEBUG),1)
-    LINUX_CFLAGS += -O0
-    WIN_CFLAGS += -O0
+    LINUX_CFLAGS += -O0 -g -ggdb3
+    WIN_CFLAGS += -O0 -g -ggdb3
 else
     LINUX_CFLAGS += -O3
     WIN_CFLAGS += -O3

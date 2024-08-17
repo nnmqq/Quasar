@@ -8,3 +8,6 @@ SortIncludes: false
 IndentWidth: 2
 TabWidth: 2
 UseTab: Never  # Use spaces for indentation
+
+# Allow my single line cases
+AllowShortCaseLabelsOnASingleLine: true
