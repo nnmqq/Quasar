@@ -7,19 +7,21 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+// Backends
 typedef enum {
   QUASAR_API_OPENGL,
   QUASAR_API_VULKAN,
   QUASAR_API_DIRECTX
 } QsAPI;
 
+// Global variables
 typedef struct {
   int isGlfwInitialized;
   int isGladInitialized;
   int capacity;
 } __attribute__((aligned(16))) QsWinVar;
 
-// Basic window settings
+// Window settings
 typedef struct {
   int width;
   int height;
@@ -33,6 +35,7 @@ typedef struct {
   QsAPI api;
 } __attribute__((aligned(64))) QsConfig;
 
+// Window object
 typedef struct {
   int width;
   int height;
@@ -40,14 +43,16 @@ typedef struct {
   GLFWwindow* window;
   int resizable;
   int vsync;
-  int id;
+  long int id;
 } __attribute__((aligned(64))) QsWindow;
 
+// Multiple window manager definition
 typedef struct {
     QsWindow* windows;
     int windowCount;
 } __attribute__((aligned(16))) QsWindowManager;
 
+// Dynamic dispatcher
 typedef struct {
     // Window Management
     int (*createWindow)(QsWindow* win, QsConfig* config);
@@ -110,11 +115,14 @@ typedef struct {
     // Backend Agnostic
     int (*getAPI)();
     void (*setAPI)(QsAPI api);
-} __attribute__((aligned(128))) QuasarAPIInterface;
+} __attribute__((aligned(128))) QuasarAPI;
 
-int initializeAPIInterface(QuasarAPIInterface* apiInterface, QsAPI api);
+int initializeAPI(QuasarAPI* apiInterface, QsAPI api);
 
+// Global variables that indicate some state like glad already running etc
 extern QsWinVar windowVar;
+
+// Manages multiple windows
 extern QsWindowManager windowManager;
 
 #endif // WINDOW_H

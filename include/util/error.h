@@ -1,6 +1,8 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#define QS_SUCCESS 1
+#define QS_FAILURE 0
 // Macro for easy error reporting
 #define QS_REPORT_ERROR(code) qsReportError(code, __func__, __LINE__, __FILE__)
 

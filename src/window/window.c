@@ -1,11 +1,13 @@
+#include "util/error.h"
 #include <stdio.h>
 #include <window/opengl.h>
 #include <window/window.h>
 
-QsWinVar windowVar = {.isGlfwInitialized=0, .isGladInitialized=0};
-QsWindowManager windowManager = { NULL, 0, INITIAL_WINDOW_CAPACITY };
+QsWinVar windowVar = {.isGlfwInitialized=0, .isGladInitialized=0, .capacity=INITIAL_WINDOW_CAPACITY};
+QsWindowManager windowManager = { NULL, 0};
 
-int initializeAPIInterface(QuasarAPIInterface* apiInterface, QsAPI api)
+// Dynamic dispatcher of API specific functions
+int initializeAPI(QuasarAPI* apiInterface, QsAPI api)
 {
   switch (api) {
   case QUASAR_API_OPENGL:
@@ -14,7 +16,9 @@ int initializeAPIInterface(QuasarAPIInterface* apiInterface, QsAPI api)
     apiInterface->setVsync = qsOpenglSetVsync;
     apiInterface->destroyWindow = qsOpenglDestroyWindow;
     apiInterface->terminateAPI = qsOpenglTerminateAPI;
-    return 0;
+
+    apiInterface->setWindowIcon = qsOpenglSetWindowIcon;
+    return QS_SUCCESS;
     break;
 
   case QUASAR_API_VULKAN:
@@ -24,8 +28,8 @@ int initializeAPIInterface(QuasarAPIInterface* apiInterface, QsAPI api)
     break;
 
   default:
-    return -1;
+    return QS_FAILURE;
     break;
   }
-  return -1;
+  return QS_FAILURE;
 }

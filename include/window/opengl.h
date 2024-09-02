@@ -6,7 +6,7 @@
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/glad.h>
 
-// OpenGL-specific function declarations
+void printWindowManager();
 // OpenGL-specific function declarations
 int qsOpenglCreateWindow(QsWindow* win, QsConfig* config);
 void qsOpenglSetContext(QsWindow* win);
@@ -31,7 +31,7 @@ void qsOpenglSetWindowFocus(QsWindow* win);
 void qsOpenglShowWindow(QsWindow* win);
 void qsOpenglHideWindow(QsWindow* win);
 void qsOpenglMinimizeWindow(QsWindow* win);
-void qsOpenglMaximizeWindow(QsWindow* win);
+  void qsOpenglMaximizeWindow(QsWindow* win);
 void qsOpenglRestoreWindow(QsWindow* win);
 
 void qsOpenglPollEvents();
